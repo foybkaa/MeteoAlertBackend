@@ -23,8 +23,8 @@ Application backend Symfony permettant d'importer des destinataires depuis un fi
 ### Étape 1 : Cloner le projet
 
 ```bash
-git clone https://github.com/votre-utilisateur/alerte-meteo-sms.git
-cd alerte-meteo-sms
+git clone git@github.com:foybkaa/MeteoAlertBackend.git
+cd MeteoAlertBackend
 ```
 
 ### Étape 2 : Installer les dépendances
