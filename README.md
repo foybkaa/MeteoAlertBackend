@@ -103,7 +103,7 @@ L'endpoint `/alerter` permet d'envoyer des alertes météo à tous les destinata
 Exemple un client HTTP comme Postman :
 - URL : `http://localhost:8000/alerter` - Docker `http://localhost:8080/alerter`
 - Méthode : `POST`
-- Paramètres : `insee=75001`
+- Paramètres : `insee=69123`
 - Headers : `X-API-KEY: votre_cle_api_secrete`
 
 ### Démarrer le worker Messenger
