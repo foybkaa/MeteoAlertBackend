@@ -64,7 +64,7 @@ docker compose exec php bin/console sql-migrations:execute
 
 Configuration Docker :
 - Application web accessible sur http://localhost:8080
-- Base de données PostgreSQL exposée sur le port 5433
+- Base de données PostgreSQL exposée sur le port 5432
 - Configuration dans le fichier `docker-compose.yml`
 
 Conteneurs :
