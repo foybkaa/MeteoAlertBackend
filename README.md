@@ -38,7 +38,7 @@ composer install
 Créez un fichier `.env.local` à la racine du projet et configurez vos variables d'environnement :
 
 ```
-DATABASE_URL="pgsql://app_user:app_password@localhost:5433/meteo_sms"
+DATABASE_URL="pgsql://app_user:app_password@database:5432/meteo_sms"
 API_KEY=votre_cle_api_secrete
 ```
 
