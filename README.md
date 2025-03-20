@@ -79,11 +79,11 @@ Conteneurs :
 Pour importer des destinataires depuis un fichier CSV :
 
 ```bash
-php bin/console app:import-csv-file /chemin/vers/fichier.csv
+php bin/console import-csv-file /chemin/vers/fichier.csv
 ```
 Avec Docker :
 ```bash
-docker compose exec php bin/console app:import-csv-file /chemin/vers/fichier.csv
+docker compose exec php bin/console import-csv-file /chemin/vers/fichier.csv
 ```
 💡 Un fichier "list_destinataires.csv" est disponible dans le dossier data à la racine du projet
 
