@@ -13,64 +13,102 @@ Application backend Symfony permettant d'importer des destinataires depuis un fi
 
 ## Installation
 
-### Prérequis
+Choisissez **une** des deux méthodes suivantes "Docker" ou "En local"
 
+---
+
+### Méthode 1 : Installation avec Docker (Recommandé)
+
+Utilise Docker pour créer les environnements nécessaires (PHP, Nginx, PostgreSQL).
+
+**Prérequis :**
+- Docker
+- Docker Compose
+
+**Étapes :**
+
+1.  **Cloner le projet :**
+    ```bash
+    git clone git@github.com:foybkaa/MeteoAlertBackend.git
+    cd MeteoAlertBackend
+    ```
+
+2.  **Configurer `.env.local` pour Docker :**
+    Copiez le fichier d'exemple :
+    ```bash
+    cp .env .env.local
+    ```
+    Ouvrez `.env.local` et modifiez les variables.  `DATABASE_URL`  et `API_KEY`
+    ```dotenv
+    # Exemple .env.local pour Docker
+    DATABASE_URL="pgsql://app_user:app_password@database:5432/meteo_sms?serverVersion=16&charset=utf8"
+    API_KEY=votre_cle_api_secrete_ici
+    ```
+
+3.  **Démarrer les conteneurs Docker :**
+    ```bash
+    docker compose up -d --build
+    ```
+
+4.  **Installer les dépendances (via Docker) :**
+    ```bash
+    docker compose exec php composer install
+    ```
+
+5.  **Lancer les migrations SQL (via Docker) :**
+    ```bash
+    docker compose exec php bin/console sql-migrations:execute
+    ```
+
+6.  L'application est accessible sur [`http://localhost:8080`](http://localhost:8080).
+
+---
+
+### Méthode 2 : Installation Locale (sur votre machine)
+
+
+**Prérequis :**
 - PHP 8.4 ou supérieur
-- Symfony 6.4
-- PostgreSQL
 - Composer
+- PostgreSQL
+- Symfony CLI
 
-### Étape 1 : Cloner le projet
+**Étapes :**
 
-```bash
-git clone git@github.com:foybkaa/MeteoAlertBackend.git
-cd MeteoAlertBackend
-```
+1.  **Cloner le projet :**
+    ```bash
+    git clone git@github.com:foybkaa/MeteoAlertBackend.git
+    cd MeteoAlertBackend
+    ```
 
-### Étape 2 : Installer les dépendances
+2.  **Installer les dépendances :**
+    ```bash
+    composer install
+    ```
 
-```bash
-composer install
-```
+3.  **Configurer `.env.local` pour le local :**
+    Copiez le fichier d'exemple :
+    ```bash
+    cp .env .env.local
+    ```
+    Ouvrez `.env.local` et **modifiez la `DATABASE_URL`** pour pointer vers votre base de données locale. **Définissez aussi votre `API_KEY`**.
+    ```dotenv
+    # Exemple .env.local pour installation locale
+    DATABASE_URL="pgsql://VOTRE_UTILISATEUR_BDD:VOTRE_MOT_DE_PASSE@127.0.0.1:5432/meteo_sms?serverVersion=16&charset=utf8"
+    API_KEY=votre_cle_api_secrete_ici
+    ```
+    **Important :** Assurez-vous que la base de données (`meteo_sms` dans l'exemple) et l'utilisateur existent sur votre PostgreSQL local.
 
-### Étape 3 : Configurer l'environnement
+4.  **Lancer les migrations SQL :**
+    ```bash
+    php bin/console sql-migrations:execute
+    ```
 
-Créez un fichier `.env.local` à la racine du projet et configurez vos variables d'environnement :
-
-```
-DATABASE_URL="pgsql://app_user:app_password@database:5432/meteo_sms"
-API_KEY=votre_cle_api_secrete
-```
-
-### Étape 4 : Exécuter les migrations SQL
-
-```bash
-php bin/console sql-migrations:execute
-```
-### Alternative : Installation avec Docker
-
-Le projet peut également être déployé avec Docker :
-
-```bash
-# Construire et démarrer les conteneurs
-docker compose up -d
-
-# Installer les dépendances
-docker compose exec php composer install
-
-# Exécuter les migrations
-docker compose exec php bin/console sql-migrations:execute
-```
-
-Configuration Docker :
-- Application web accessible sur http://localhost:8080
-- Base de données PostgreSQL exposée sur le port 5432
-- Configuration dans le fichier `docker-compose.yml`
-
-Conteneurs :
-- **php** : PHP 8.4 avec toutes les extensions requises
-- **webserver** : Nginx pour servir l'application
-- **database** : PostgreSQL 14
+5.  **Lancer le serveur Symfony :**
+    ```bash
+    symfony server:start
+    ```
+    L'application est accessible sur [`http://127.0.0.1:8000`](http://127.0.0.1:8000).
 
 ## Utilisation
 
@@ -78,13 +116,17 @@ Conteneurs :
 
 Pour importer des destinataires depuis un fichier CSV :
 
-```bash
-php bin/console import-csv-file /chemin/vers/fichier.csv
-```
 Avec Docker :
 ```bash
 docker compose exec php bin/console import-csv-file /chemin/vers/fichier.csv
 ```
+
+En locale :
+
+```bash
+php bin/console import-csv-file /chemin/vers/fichier.csv
+```
+
 💡 Un fichier "list_destinataires.csv" est disponible dans le dossier data à la racine du projet
 
 Format attendu du CSV :
@@ -98,24 +140,39 @@ insee,telephone
 
 ### Utiliser l'endpoint d'alerte
 
-L'endpoint `/alerter` permet d'envoyer des alertes météo à tous les destinataires associés à un code INSEE.
+L'endpoint `/alerter` permet d'envoyer des alertes météo à tous les destinataires associés à un code INSEE. Pour l'utiliser avec un client HTTP comme Postman :
 
-Exemple un client HTTP comme Postman :
-- URL : `http://localhost:8000/alerter` - Docker `http://localhost:8080/alerter`
-- Méthode : `POST`
-- Paramètres : `insee=69123`
-- Headers : `X-API-KEY: votre_cle_api_secrete`
+1.  **URL :** `http://localhost:8080/alerter`
+
+2.  **Méthode :** `POST`.
+
+3.  **Headers :** Ajoutez les deux en-têtes suivants :
+    *   `X-API-KEY:` `votre_cle_api_secrete`
+    *   `Content-Type` : `application/json` 
+
+4.  **Body :**
+    *   Sélectionnez l'option "raw".
+    *   Choisissez le format "JSON" dans la liste déroulante.
+    *   Dans la zone de texte, mettez le JSON contenant le code INSEE, comme ceci :
+
+    ```json
+    {
+        "insee": "69123" 
+    }
+    ```
+    *(Remplacez `"69123"` par le code INSEE souhaité)*.
 
 ### Démarrer le worker Messenger
 
 Pour traiter les messages asynchrones (envoi de SMS) :
 
-```bash
-php bin/console messenger:consume
-```
-Avece docker:
+Avec docker:
 ```bash
 docker compose exec php bin/console messenger:consume
+```
+En local
+```bash
+php bin/console messenger:consume
 ```
 
 ### Vérifier les logs d'envoi des SMS
