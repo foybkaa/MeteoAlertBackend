@@ -24,7 +24,7 @@ class AlerteController extends AbstractController
         DestinataireService $destinataireService,
         MessageBusInterface $bus
     ): JsonResponse {
-        $validApiKey = $_ENV['API_KEY'];
+        $validApiKey = $this->getParameter('app.api_key');;
 
         $apiKey = $request->headers->get('X-API-KEY');
 
